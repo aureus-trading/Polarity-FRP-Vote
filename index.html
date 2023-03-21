@@ -1,0 +1,356 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-type" content="text/plain; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polarity Funds Recovery Proposal Dapp Statistics</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .no-focus:focus{
+            box-shadow:none !important;
+            outline:none !important;
+        }
+        
+        a:link, a:visited {
+  background-color: #0dba6d;
+  color: white;
+  padding: 15px 25px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+  display: inline-block;
+} 
+
+      #topBanner {
+        background: #f32123;
+        color: white;
+        font-size:1.35rem;
+        padding: 10px;
+        text-align: center;
+        top: 30;
+        width: 100%;
+        z-index: 2;
+      }
+
+      #topBanner .btn-close {
+        position: absolute;
+        right: 0;
+      }
+       
+    </style>
+</head>
+<body style="background-color:#FFFF;">
+    <div id="loading" class="text-center py-5">
+        <span class="spinner-border text-warning" role="status"></span>
+    </div>
+    <div id="mainArea" class="d-none">
+        <div class="shadow-sm py-3 text-center">
+            <img src="logo.jpg" height="40px;">
+            <h4 class="d-inline" style="vertical-align:middle;color:black;">Polarity Funds Recovery Proposal Dapp Stats</h4>
+        </div>
+        
+    <div id="topBanner">
+      <b >
+        DAPP to allow users to vote on the recovery plan for deficit in Polarity gateways.
+        Click here to Submit Your Vote
+      </b>
+      <a class="frpbutton" href="https://polarity.exchange/dapps?dapp=3Jsz4Dn5EEPLRhdMXrGf9YFVXqzZRvLF6DD">FRP Dapp</a>
+      <button class="btn btn-close btn-close-white pe-"
+          onclick="closeTopBanner()">
+      </button>
+    </div>        
+                    
+        <div class="container-fluid mx-auto py-5 px-lg-5">
+            <div class="row">
+                <div class="col-md-3 col-12 mb-3">
+                    <div class="card py-3" style="background: #000080;border-radius:10px;">
+                        <div class="card-body text-center h4 text-white" id="panel1"></div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-12 mb-3">
+                    <div class="card py-3" style="background: #000080;border-radius:10px;">
+                        <div class="card-body text-center h4 text-white" id="panel2"></div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-12 mb-3">
+                    <div class="card py-3" style="background: #000080;border-radius:10px;">
+                        <div class="card-body text-center h4 text-white" id="panel3"></div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-12 mb-3">
+                    <div class="card py-3" style="background: #000080;border-radius:10px;">
+                        <div class="card-body text-center h4 text-white" id="panel4"></div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 col-12 mb-3">
+                    <div class="card py-3" style="background: #12263f;border-radius:10px;">
+                        <div class="card-body text-center h4 text-white" id="panel5"></div>
+                    </div>
+                </div>                
+                
+                <div class="col-md-3 col-12 mb-3">
+                    <div class="card py-3" style="background: #12263f;border-radius:10px;">
+                        <div class="card-body text-center h4 text-white" id="panel6"></div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 col-12 mb-3">
+                    <div class="card py-3" style="background: #0dba6d;border-radius:10px;">
+                        <div class="card-body text-center h4 text-white" id="panel8"></div>
+                    </div>
+                </div>                
+                                
+            </div>
+        </div>
+
+        
+
+        <div class="container-fluid mx-auto py-5 px-lg-5">
+            <div class="row">
+                <div class="col-md-9 pb-3">
+                    <div class="form-group rounded position-relative border p-1">              
+                        <label class="small ml-3 mt-n3 px-2 position-absolute bg-white">Enter Address</label>
+                        <input type="text" class="form-control border-0 px-4 no-focus" oninput="search(this.value);">
+                    </div>
+                </div>
+                <div class="col-md-3 pb-3">
+                    <div class="form-group rounded position-relative border p-1">
+                        <label class="small ml-3 mt-n3 px-2 position-absolute bg-white">Sort By</label>
+                        <select class="custom-select no-focus border-0 pl-3" onchange="sortData(this.value);">
+                            <option value="0" selected>Voting Counts (Hight to Low)</option>
+                            <option value="1">Voting Counts (Low to Hight)</option>
+                            <option value="2">Address (A-Z)</option>
+                            <option value="3">Address (Z-A)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div id="resultArea"></div>
+        </div>
+    </div>
+    <script>
+        
+        const APIURL = "https://tnnode.turtlenetwork.eu/addresses/data/3Jsz4Dn5EEPLRhdMXrGf9YFVXqzZRvLF6DD";
+
+        var loanData = '';
+        var loading = document.getElementById("loading");
+        var mainArea = document.getElementById("mainArea");
+        var resultArea = document.getElementById("resultArea");
+        var address = '';
+        var sortRule = 0;
+        var blockHeight;
+        
+            
+            let VotingAsset1 = "Total_Votes_OPTION1";
+            let VA1          = VotingAsset1.replace(VotingAsset1, "[Option 1]<br><br>Buyback of Assets.");
+            
+            let VotingAsset2 = "Total_Votes_OPTION2";
+            let VA2          = VotingAsset2.replace(VotingAsset2, "[Option 2]<br><br>[Option 1] + Alter Forte Opt in Airdrop");
+                                                
+            
+            window.onload = async function(){
+            var responseObject = await fetch(APIURL);
+            loanData = await responseObject.json();
+            
+            var panel1ResponseObject = await fetch("https://tnnode.turtlenetwork.eu/addresses/data/3Jsz4Dn5EEPLRhdMXrGf9YFVXqzZRvLF6DD/Total_Tokens_Distributed");
+            if(panel1ResponseObject.status ==404)
+            {
+            document.getElementById("panel1").innerHTML = 'Total Tokens Distributed for Voting<br>'+"-";
+            }
+            panel1Data = await panel1ResponseObject.json();
+            document.getElementById("panel1").innerHTML = 'Total Tokens Distributed<br>'+panel1Data.value/Math.pow(10,8)+" VOTE";
+
+            var panel2ResponseObject = await fetch("https://tnnode.turtlenetwork.eu/addresses/data/3Jsz4Dn5EEPLRhdMXrGf9YFVXqzZRvLF6DD/"+"Total_Votes");
+            if(panel2ResponseObject.status ==404)
+            {
+            document.getElementById("panel2").innerHTML = 'Total Votes Received<br>'+"-";
+            }
+            panel2Data = await panel2ResponseObject.json();
+            document.getElementById("panel2").innerHTML = 'Total Votes Received<br>'+panel2Data.value/Math.pow(10,8);
+            
+            var panel3ResponseObject = await fetch("https://tnnode.turtlenetwork.eu/addresses/data/3Jsz4Dn5EEPLRhdMXrGf9YFVXqzZRvLF6DD/"+"Voting_Start_TimeStamp");
+            if(panel3ResponseObject.status ==404)
+            {
+            document.getElementById("panel3").innerHTML = 'Voting Start Time <br>'+"-";
+            }
+            panel3Data = await panel3ResponseObject.json();
+            var date = new Date(panel3Data.value);
+            document.getElementById("panel3").innerHTML = 'Voting Start Time <br>'+date.toLocaleString();            
+            
+            var panel4ResponseObject = await fetch("https://tnnode.turtlenetwork.eu/addresses/data/3Jsz4Dn5EEPLRhdMXrGf9YFVXqzZRvLF6DD/"+"Voting_End_TimeStamp");
+            if(panel4ResponseObject.status ==404)
+            {
+            document.getElementById("panel4").innerHTML = 'Voting End Time <br>'+"-";
+            }
+            panel4Data = await panel4ResponseObject.json();
+            var date = new Date(panel4Data.value);
+            document.getElementById("panel4").innerHTML = 'Voting End Time <br>'+date.toLocaleString();                        
+            
+            
+
+            var panel5ResponseObject = await fetch("https://tnnode.turtlenetwork.eu/addresses/data/3Jsz4Dn5EEPLRhdMXrGf9YFVXqzZRvLF6DD/"+VotingAsset1);
+            if(panel5ResponseObject.status ==404)
+            {
+            document.getElementById("panel5").innerHTML = VA1+'<br>Total Votes<br>'+"-";
+            }
+            panel5Data = await panel5ResponseObject.json();
+            document.getElementById("panel5").innerHTML = VA1+'<br>Total Votes: '+panel5Data.value/Math.pow(10,8) +" VOTE";
+
+            var panel6ResponseObject = await fetch("https://tnnode.turtlenetwork.eu/addresses/data/3Jsz4Dn5EEPLRhdMXrGf9YFVXqzZRvLF6DD/"+VotingAsset2);
+            if(panel6ResponseObject.status ==404)
+            {
+            document.getElementById("panel6").innerHTML = VA2+' Votes<br>'+"-";
+            }
+            panel6Data = await panel6ResponseObject.json();
+            document.getElementById("panel6").innerHTML = VA2+'<br>Total Votes: '+panel6Data.value/Math.pow(10,8)+" VOTE";
+            
+                                                            
+            var WinnerVotes = Math.max(panel5Data.value,panel6Data.value)        
+            
+            if (panel5Data.value == WinnerVotes)
+            {
+            document.getElementById("panel8").innerHTML = 'Current Winner<br>'+VA1;            
+            }
+            
+            else if (panel6Data.value == WinnerVotes)
+            {
+            document.getElementById("panel8").innerHTML = 'Current Winner<br>'+VA2;            
+            }
+           
+            loading.remove();
+            mainArea.classList.remove('d-none');
+            showData(loanData, sortRule);
+        }
+
+        function search(value){
+            address = value.trim();
+            showData(loanData, sortRule);
+        }
+
+        function sortData(value){
+            sortRule = value;
+            showData(loanData, sortData);
+        }
+                       
+        function showData(loanData, sort){
+            var data = loanData;
+            var output = '';
+            var allIndex = [];
+            var searchResult = [];
+                        
+
+            
+            data.forEach(function(item, index){
+                if(item.key.includes(address)){
+                    thisKey = item.key.substring(item.key.lastIndexOf("_")+1);
+                    thisValue = item.value;
+                    if(allIndex.indexOf(thisKey) < 0){
+                        allIndex.push(thisKey);
+                        searchResult.push({Address:thisKey});
+                    }
+                    var thisIndex = allIndex.indexOf(thisKey);
+ 
+                    if(item.key.includes('User_Total_Votes')){
+                        searchResult[thisIndex].DepositAmount = item.value;
+                    }
+                }
+            });
+
+            if(searchResult.length > 0){
+                searchResult.forEach(function(item, index){
+                    if(searchResult[index].DepositAmount === undefined){
+                        delete searchResult[index];
+                    }
+                });
+
+                if(sortRule == 0){
+                    searchResult.sort(function (a, b) {
+                        return parseFloat(a.DepositAmount) - parseFloat(b.DepositAmount);
+                    });
+                    searchResult =  searchResult.reverse();
+                }else if(sortRule == 1){
+                    searchResult.sort(function (a, b) {
+                        return parseFloat(a.DepositAmount) - parseFloat(b.DepositAmount);
+                    });
+                }else if(sortRule == 2){
+                    searchResult.sort(function (a, b) {
+                        return a.Address - b.Address;
+                    });
+                }else if(sortRule == 3){
+                    searchResult.sort(function (a, b) {
+                        return a.Address - b.Address;
+                    });
+                    searchResult =  searchResult.reverse();
+                }
+
+                output += '<div class="table-responsive">'
+                output += '<table class="table border table-borderless table-striped table-light" id="table">'
+                output += '<thead class="text-white" style="background-color: #4100ff">';
+                output += '<tr>';
+                output += '<th>Voter Address</th>';
+                output += '<th>User Sumup of Votes</th>';
+                output += '</tr>';
+                output += '</thead>';
+                output += '<tbody>';
+                searchResult.forEach(function(item, index){
+                    output += '<tr style="cursor:pointer;">';
+                    output += '<td>'+searchResult[index].Address+'</td>';
+
+                    if(searchResult[index].DepositAmount === undefined || String(searchResult[index].DepositAmount).length < 1){
+                        output += '<td>N&#47;A</td>';
+                    }else{
+                        output += '<td>'+(searchResult[index].DepositAmount/100000000).toFixed(8);
+                    }
+                    
+                    output += '</td>';
+                    output += '</tr>';
+                });
+                output += '</tbody>';
+                output += '</table>';
+                output += '</div>';
+
+                output += '<div class="text-center pt-3"><button class="btn btn-success px-5 py-3" onclick="exportTableToCSV(\'download.csv\');">Download As Excel</button></div>';
+                
+            }else{
+                output = '<h4 class="text-center mt-4">Opps!! No Result was found.</h4>';
+            }
+            resultArea.innerHTML = output;
+        }
+
+        
+		function exportTableToCSV(filename) {
+			var csv = [];
+			var rows = document.querySelectorAll("table tr");
+			for (var i = 0; i < rows.length; i++) {
+				var row = [], cols = rows[i].querySelectorAll("td, th");
+				for (var j = 0; j < cols.length; j++) 
+					row.push(cols[j].innerText);   
+				csv.push(row.join(","));        
+			}
+			downloadCSV(csv.join("\n"), filename);
+		}
+        
+		function downloadCSV(csv, filename) {
+			var csvFile;
+			var downloadLink;
+			csvFile = new Blob([csv], {type: "text/csv"});
+			downloadLink = document.createElement("a");
+			downloadLink.download = filename;
+			downloadLink.href = window.URL.createObjectURL(csvFile);
+			downloadLink.style.display = "none";
+			document.body.appendChild(downloadLink);
+			downloadLink.click();
+		}
+        
+
+        
+        
+
+    </script>
+</body>
+</html>
